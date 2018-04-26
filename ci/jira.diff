@@ -1,0 +1,10 @@
+diff --git a/requirements.txt b/requirements.txt
+index db41f4e..0c9bfa6 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -1,4 +1,4 @@
+-argparse; python_version<'3.2'
++argparse; python_version<'2.7'
+ defusedxml
+ ordereddict; python_version<'3.1'
+ pbr>=3.0.0

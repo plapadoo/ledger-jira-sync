@@ -1,0 +1,9 @@
+compile:
+  stage: build
+  only:
+    - master
+  script:
+    - nix-build
+  artifacts:
+    paths:
+      - build

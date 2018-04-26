@@ -1,0 +1,6 @@
+List of Included Third-Party Dependencies
+-----------------------------------------
+
+jira
+  Python library to work with JIRA APIs
+  License: BSD

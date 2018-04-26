@@ -1,0 +1,88 @@
+* ledger-jira-sync
+
+=ledger-jira-sync= is a tool to synchronize your [[https://www.ledger-cli.org/][ledger]] work logs with [[https://www.atlassian.com/software/jira][JIRA]] work logs.
+
+** Abstract
+
+This tool is useful for people or companies that decided on using ledger (or something compatible with the ledger journal format, like [[http://furius.ca/beancount/][beancount]] or [[http://hledger.org/][hledger]]) to keep track of their work hours, and who want to synchronize this data with JIRA work logs. This program will assume that the ledger journals are the “ground truth”, meaning that nothing will be synchronized /from/ JIRA /to/ ledger. It’s written in Python 2.
+
+** Description
+
+The program will assume you have a ledger-compatible journal file, containing accounts that have work logged. For example, say that you’re working for “customer” on a project “moonshot” and you have two issues to work on “planning” and “implementation”, on which you already spent some time. Your ledger file might look like this:
+
+#+BEGIN_SRC ledger
+2018-01-12 customer  ; initial planning
+	moonshot:usage:planning  1.5h  ; :Sylvester:
+	moonshot:quota
+
+2018-01-12 customer  ; initial planning
+	moonshot:usage:planning  1.5h  ; :Elmer:
+	moonshot:quota
+
+2018-03-12 customer  ; initial implementation
+	moonshot:usage:implementation  30m  ; :Elmer:
+	moonshot:quota
+#+END_SRC
+
+As you can see, we use a tag to signify /who/ did the work, and then use ordinary units like ’m’ and ’h’. Now, suppose – unsurprisingly – that the customer doesn’t use ledger, but JIRA, and you’re supposed to log your work using the “[[https://confluence.atlassian.com/jirasoftwarecloud/logging-work-on-issues-902499028.html][work log]]” feature.
+
+As you can imagine, having two databases which you have to manually synchronize is a very bad idea. That’s where =ledger-jira-sync= comes in! It takes your ledger work hours and transfers them to JIRA work hours. All you have to write in addition to your ledger entries is a file that maps your ledger accounts to JIRA tickets, as such:
+
+#+BEGIN_EXAMPLE
+moonshot:usage:planning=Planning
+moonshot:usage:implementation=Implementation
+#+END_EXAMPLE
+
+** Installation, prerequisites
+
+You need:
+
+ - Python >= 2.7
+ - ledger compiled with Python support
+
+Installation is easy, just do a =python setup.py install --user=. If you’re using Nix, entering a =nix-shell= is enough.
+
+If you’re experiencing strange errors calling the program (see below for instructions), you might not have Python support enabled in ledger.
+** Usage
+
+The program takes the following parameters:
+
+| Parameter name | Description                              |
+|----------------+------------------------------------------|
+| =--server=     | JIRA server URL                          |
+| =--email=      | JIRA login e-mail                        |
+| =--password=   | JIRA password in plain text (see below)  |
+| =--ledgerfile= | ledger journal file to scan              |
+| =--ledgertag=  | ledger tag corresponding to your account |
+| =--assocfile=  | Association file between ledger and JIRA |
+
+The parameters for server, mail, password, ledgerfile should be clear. Note that if you’re afraid of plain text passwords (as we are), consider using [[http://passwordstore.org][pass]] or [[https://github.com/justwatchcom/gopass][gopass]] and then just inject the password via a subshell, as such:
+
+#+BEGIN_SRC sh
+ledger python ledger-jira-sync -- --password $(pass show customer.atlassian.net)
+#+END_SRC
+
+The =ledgertag= is the tag that basically corresponds to your name. It’s just used to filter ledger entries, not for the JIRA side of things.
+
+The =assocfile= is a file that maps your ledger accounts to JIRA tickets. The format is really simple; it’s lines containing: ~ledgeraccount=jira-ticket~. You can specify ~=c:~ instead of a plain ~=~ if you want to transfer the entry comment to JIRA, too. Note that the JIRA ticket ID is enough, you don’t have to specify the full URL (you /do/ have to specify the complete ledger account, though).
+
+To call the programm, you have to have ledger compiled with Python support. Most binary distributions should have this enabled. If you’re getting weird errors, tough, you might reconsider. The safest way to call it is by using =ledger python=, so ledger can call the program for you:
+
+#+BEGIN_SRC sh
+ledger python ledger_jira_sync/__main__.py -- --server …
+#+END_SRC
+
+** How it works
+
+The program will do the following:
+
+ - scan =ledgerfile= for entries tagged with =ledgertag=
+ - filter out those ledger entries that are associated (via =assocfile=) with JIRA tickets
+ - log in to JIRA
+ - load the work logs for the JIRA tickets found
+ - compare the ledger entries with the JIRA tickets, compare differences
+ - ask the user if it should proceed
+ - delete those JIRA work logs that don’t appear as ledger entries
+ - add those JIRA work logs that don’t appear in JIRA
+
+Thus, it does a full sync, always. If you accidentally add work logs in JIRA, it will notice. If you accidentally delete work logs, it will notice that.
