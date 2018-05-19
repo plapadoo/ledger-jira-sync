@@ -42,6 +42,7 @@ let
     pythonPkgs.requests_toolbelt
     pythonPkgs.ipython
     pythonPkgs.defusedxml
+    pythonPkgs.pbr
   ];
   };
 in
@@ -59,6 +60,12 @@ in
     '';
     
     checkInputs = [ pythonPkgs.pylint ];
+
+    postInstall = ''
+      for prog in "$out/bin/"*; do
+        wrapProgram "$prog" --prefix PYTHONPATH : "${pkgs.ledger}/lib/python2.7/site-packages"
+      done
+    '';
 
     buildInputs = [
       pkgs.python2

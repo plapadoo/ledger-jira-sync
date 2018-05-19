@@ -40,7 +40,7 @@ You need:
  - Python >= 2.7
  - ledger compiled with Python support
 
-Installation is easy, just do a =python setup.py install --user=. If you’re using Nix, entering a =nix-shell= is enough.
+Installation is easy, just do a =python setup.py install --user=. If you’re using Nix, you can build it via =nix-build= and then run it via =result/bin/ledger-jira-sync= (or install it into your profile via =nix-env=).
 
 If you’re experiencing strange errors calling the program (see below for instructions), you might not have Python support enabled in ledger.
 ** Usage
