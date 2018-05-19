@@ -69,7 +69,13 @@ The =assocfile= is a file that maps your ledger accounts to JIRA tickets. The fo
 To call the programm, you have to have ledger compiled with Python support. Most binary distributions should have this enabled. If you’re getting weird errors, tough, you might reconsider. The safest way to call it is by using =ledger python=, so ledger can call the program for you:
 
 #+BEGIN_SRC sh
-ledger python ledger_jira_sync/__main__.py -- --server …
+ledger python ledger_jira_sync/__main__.py -- \
+ --server customer.atlassian.net \
+ --email foo@test.com \
+ --password yourpassword \
+ --ledgerfile foo.ledger \
+ --ledgertag person \
+ --assocfile foo.assoc
 #+END_SRC
 
 ** How it works
