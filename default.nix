@@ -54,18 +54,13 @@ in
     shellHook = "export PYTHONPATH=$(pwd):$PYTHONPATH";
     propagatedBuildInputs = [
       jira-python
+      pkgs.ledger
     ];
     checkPhase = ''
       PYLINTHOME="/tmp" pylint ledger_jira_sync
     '';
     
     checkInputs = [ pythonPkgs.pylint ];
-
-    postInstall = ''
-      for prog in "$out/bin/"*; do
-        wrapProgram "$prog" --prefix PYTHONPATH : "${pkgs.ledger}/lib/python2.7/site-packages"
-      done
-    '';
 
     buildInputs = [
       pkgs.python2

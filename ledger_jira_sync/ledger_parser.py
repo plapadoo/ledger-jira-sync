@@ -1,5 +1,5 @@
-from ledger_jira_sync.ledger_entry import LedgerEntry
 import ledger
+from ledger_jira_sync.ledger_entry import LedgerEntry
 
 
 def read_ledger(filename, authors):
