@@ -29,9 +29,11 @@ As you can see, we use a tag to signify /who/ did the work, and then use ordinar
 As you can imagine, having two databases which you have to manually synchronize is a very bad idea. That’s where =ledger-jira-sync= comes in! It takes your ledger work hours and transfers them to JIRA work hours. All you have to write in addition to your ledger entries is a file that maps your ledger accounts to JIRA tickets, as such:
 
 #+BEGIN_EXAMPLE
-moonshot:usage:planning=Planning
-moonshot:usage:implementation=Implementation
+moonshot:usage:planning=MYPROJ-128
+moonshot:usage:implementation=c:MYPROJ-3
 #+END_EXAMPLE
+
+Note the =c:= after the equals symbol on the second line. While synchronizing, the entry’s comment will be added to the JIRA work log for the issue =MYPROJ-3=.
 
 ** Installation, prerequisites
 
