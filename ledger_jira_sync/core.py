@@ -16,7 +16,7 @@ def entry_from_ledger_entry(e, ticket_mappings):
     if str(e.account) not in ticket_mappings:
         return None
     mapping = ticket_mappings[str(e.account)]
-    return Entry(int(e.time_spent_seconds), e.author, str(e.date), e.account, mapping.jira_ticket, None, e.comment if mapping.with_comment else '')
+    return Entry(int(e.time_spent_seconds) // 60 * 60, e.author, str(e.date), e.account, mapping.jira_ticket, None, e.comment if mapping.with_comment else '')
 
 def jira_logs(jira_client, email, ledgertag, account, ticket_id):
     print 'Getting logs for '+ticket_id
