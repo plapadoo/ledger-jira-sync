@@ -15,15 +15,13 @@ let
 
   jira-python = pythonPkgs.buildPythonPackage rec {
     pname = "jira";
-    version = "1.0.15";
+    version = "2.0.0";
     doCheck = false;
 
     src = pythonPkgs.fetchPypi {
       inherit pname version;
-      sha256 = "1s3z85kn3s29qbas8b5j2fjal1pf14npy170skamil0dbcfql410";
+      sha256 = "14qfpbnjnmqz44zk0msdgpx39ary21vdq2h3xnfv4icfz7glmag2";
     };
-
-  patches = [ ci/jira.diff ];
 
   buildInputs = [
     pythonPkgs.sphinx
