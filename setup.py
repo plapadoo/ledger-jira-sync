@@ -16,6 +16,6 @@ setup(
     author_email='middendorf@plapadoo.de',
     license='BSD3',
     packages=find_packages(),
-    install_requires=['jira'],
+    install_requires=['jira>=2.0.0'],
     include_package_data=True,
     zip_safe=True)
